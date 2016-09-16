@@ -21,6 +21,29 @@
 // MinKey                  -1           “minKey”
 // MaxKey                  127          “maxKey”
 
+var TYPES = [
+  "undefined",
+  "null",
+  "double",
+  "string",
+  "array",
+  "binData",
+  "objectId",
+  "bool",
+  "date",
+  "regex",
+  "dbPointer",
+  // "javascript",
+  "symbol",
+  // "javascriptWithScope",
+  "int",
+  "timestamp",
+  "long",
+  "object",
+  // "minKey",
+  // "maxKey",
+]
+
 var types = [
   {
     alias: 'undefined',
@@ -120,5 +143,6 @@ function testBsonType (type, value) {
 }
 
 bsonTypeOfIs.testBsonType = testBsonType
+bsonTypeOfIs.TYPES = TYPES
 
 module.exports = bsonTypeOfIs
