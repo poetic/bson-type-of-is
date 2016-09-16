@@ -23,12 +23,20 @@
 
 var types = [
   {
+    alias: 'undefined',
+    check: function (v) { return typeof v === 'undefined' }
+  },
+  {
+    alias: 'null',
+    check: function (v) { return v === null }
+  },
+  {
     alias: 'double',
-    check: function (v, type, bsontype) { return bsontype === 'Double' }
+    check: function (v) { return v && v._bsontype === 'Double' }
   },
   {
     alias: 'string',
-    check: function (v, type) { return type === 'string' }
+    check: function (v) { return typeof v === 'string' }
   },
   {
     alias: 'array',
@@ -36,15 +44,15 @@ var types = [
   },
   {
     alias: 'binData',
-    check: function (v, type, bsontype) { return bsontype === 'Binary' }
+    check: function (v) { return v && v._bsontype === 'Binary' }
   },
   {
     alias: 'objectId',
-    check: function (v, type, bsontype) { return bsontype === 'ObjectID' }
+    check: function (v) { return v && v._bsontype === 'ObjectID' }
   },
   {
     alias: 'bool',
-    check: function (v, type) { return type === 'boolean' }
+    check: function (v) { return typeof v === 'boolean' }
   },
   {
     alias: 'date',
@@ -52,56 +60,44 @@ var types = [
   },
   {
     alias: 'regex',
-    check: function (v, type, bsontype) { return bsontype === 'BSONRegExp' }
+    check: function (v) { return v && v._bsontype === 'BSONRegExp' }
   },
   {
     alias: 'dbPointer',
-    check: function (v, type, bsontype) { return bsontype === 'DBRef' }
+    check: function (v) { return v && v._bsontype === 'DBRef' }
   },
   // { alias: 'javascript', check: function (v) { } },
   {
     alias: 'symbol',
-    check: function (v, type, bsontype) { return bsontype === 'Symbol' }
+    check: function (v) { return v && v._bsontype === 'Symbol' }
   },
   // { alias: 'javascriptWithScope', check: function (v) { return  } },
   {
     alias: 'int',
-    check: function (v, type, bsontype) { return bsontype === 'Int32' }
+    check: function (v) { return v && v._bsontype === 'Int32' }
   },
   {
     alias: 'timestamp',
-    check: function (v, type, bsontype) { return bsontype === 'Timestamp' }
+    check: function (v) { return v && v._bsontype === 'Timestamp' }
   },
   {
     alias: 'long',
-    check: function (v, type, bsontype) { return bsontype === 'Long' }
+    check: function (v) { return v && v._bsontype === 'Long' }
   },
   // { alias: 'minKey', check: function (v) { return  } },
   // { alias: 'maxKey', check: function (v) { return  } },
   // NOTE: object should be at the end
   {
     alias: 'object',
-    check: function (v, type) { return type === 'object' }
+    check: function (v) { return typeof v === 'object' }
   },
 ]
 
 // recognize bson types
 function bsonTypeOfIs (value) {
-  if (value === null) {
-    return 'null'
-  }
-
-  var type = typeof value
-
-  if (type === 'undefined') {
-    return 'undefined'
-  }
-
-  var bsontype = value._bsontype
-
   var i
   for (i = 0; i < types.length; i++) {
-    if (types[i].check(value, type, bsontype)) {
+    if (types[i].check(value)) {
       return types[i].alias
     }
   }
@@ -111,5 +107,18 @@ function bsonTypeOfIs (value) {
     value: value
   }
 }
+
+function testBsonType (type, value) {
+  if (!types[type]) {
+    throw {
+      message: 'This type is not a bson type alias',
+      value: type
+    }
+  }
+
+  return types[type].check(value)
+}
+
+bsonTypeOfIs.testBsonType = testBsonType
 
 module.exports = bsonTypeOfIs
