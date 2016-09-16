@@ -44,7 +44,7 @@ var TYPES = [
   // "maxKey",
 ]
 
-var types = [
+var typesArray = [
   {
     alias: 'undefined',
     check: function (v) { return typeof v === 'undefined' }
@@ -116,12 +116,17 @@ var types = [
   },
 ]
 
+var typesObject = typesArray.reduce(function (acc, type) {
+  acc[type.alias] = type.check
+  return acc
+}, {});
+
 // recognize bson types
 function bsonTypeOfIs (value) {
   var i
-  for (i = 0; i < types.length; i++) {
-    if (types[i].check(value)) {
-      return types[i].alias
+  for (i = 0; i < typesArray.length; i++) {
+    if (typesArray[i].check(value)) {
+      return typesArray[i].alias
     }
   }
   // Unrecognized type
@@ -132,17 +137,19 @@ function bsonTypeOfIs (value) {
 }
 
 function testBsonType (type, value) {
-  if (!types[type]) {
+  if (!typesObject[type]) {
     throw {
       message: 'This type is not a bson type alias',
       value: type
     }
   }
 
-  return types[type].check(value)
+  return typesObject[type].check(value)
 }
 
-bsonTypeOfIs.testBsonType = testBsonType
 bsonTypeOfIs.TYPES = TYPES
+bsonTypeOfIs.typesArray = typesArray
+bsonTypeOfIs.typesObject = typesObject
+bsonTypeOfIs.testBsonType = testBsonType
 
 module.exports = bsonTypeOfIs
