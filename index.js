@@ -130,18 +130,14 @@ function bsonTypeOfIs (value) {
     }
   }
   // Unrecognized type
-  throw {
-    message: 'This value has a type we do not recognize',
-    value: value
-  }
+  console.log('Value: ', value);
+  throw new Error('The value above has a type we do not recognize');
 }
 
 function testBsonType (type, value) {
   if (!typesObject[type]) {
-    throw {
-      message: 'This type is not a bson type alias',
-      value: type
-    }
+    console.log('Value: ', value);
+    throw new Error('The value above has a type we do not recognize');
   }
 
   return typesObject[type].check(value)
