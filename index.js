@@ -54,10 +54,6 @@ var typesArray = [
     check: function (v) { return v === null }
   },
   {
-    alias: 'double',
-    check: function (v) { return v && v._bsontype === 'Double' }
-  },
-  {
     alias: 'string',
     check: function (v) { return typeof v === 'string' }
   },
@@ -106,6 +102,11 @@ var typesArray = [
   {
     alias: 'long',
     check: function (v) { return v && v._bsontype === 'Long' }
+  },
+  // double should be after int and long
+  {
+    alias: 'double',
+    check: function (v) { return typeof v === 'number' || (v && v._bsontype === 'Double') }
   },
   // { alias: 'minKey', check: function (v) { return  } },
   // { alias: 'maxKey', check: function (v) { return  } },
